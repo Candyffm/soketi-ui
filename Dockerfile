@@ -1,4 +1,4 @@
-FROM php:8.2-fpm as composer
+FROM php:8.4-fpm as composer
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -18,14 +18,14 @@ ADD /composer.lock /src/composer.lock
 
 RUN cd /src && composer install --no-dev --no-scripts
 
-FROM node:18 as modules
+FROM node:24 as modules
 
 ADD /package.json /src/package.json
 ADD /yarn.lock /src/yarn.lock
 
 RUN cd /src && yarn
 
-FROM node:18 as build
+FROM node:24 as build
 
 ADD /package.json /src/package.json
 ADD /yarn.lock /src/yarn.lock
@@ -41,7 +41,7 @@ ADD /vite.config.mjs /src/vite.config.mjs
 
 RUN cd /src && yarn build
 
-FROM jkaninda/nginx-php-fpm:8.2
+FROM jkaninda/nginx-php-fpm:8.4
 
 ADD /nginx.conf /var/www/html/conf/nginx/nginx-site.conf
 
